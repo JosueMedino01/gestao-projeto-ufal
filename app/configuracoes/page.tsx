@@ -1,370 +1,309 @@
-import React from "react";
-import {
-  ArrowLeft,
-  Bell,
-  Clock3,
-  Calendar,
-  Globe,
-  Palette,
-  User,
-  Shield,
-  Bookmark,
-  Lightbulb,
-  Volume2,
-  TriangleAlert,
-  RotateCcw,
-  Download,
-  Trash2,
-  HelpCircle,
-  ChevronRight,
-} from "lucide-react";
+import { SidebarToggleButton } from "../_components/sidebar-toggle-button";
 
-export default function SettingsPage() {
+export default function ConfiguracoesPage() {
   return (
-    <div className="min-h-screen bg-[#F5F6FA] p-8">
+    <section className="flex min-h-screen flex-1 flex-col overflow-auto bg-[#F7F8FC] px-6 py-6 lg:px-8">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <button
-          aria-label="Voltar"
-          className="w-12 h-12 rounded-xl bg-white shadow flex items-center justify-center"
-        >
-          <ArrowLeft size={20} />
-        </button>
+      <header className="flex items-start justify-between">
+        <div className="flex items-start gap-4">
+          <SidebarToggleButton />
 
-        <div>
-          <h1 className="text-4xl font-bold text-[#0C5DA8]">
-            Configurações
-          </h1>
+          <div>
+            <h1 className="text-4xl font-extrabold text-[#1F5FBF]">
+              Configurações
+            </h1>
 
-          <p className="text-gray-600">
-            Personalize sua experiência no Tutor CNH
-          </p>
+            <p className="mt-1 text-sm text-[#6A7487]">
+              Personalize sua experiência no Tutor CNH
+            </p>
+          </div>
         </div>
-      </div>
+
+        <div className="flex items-center gap-4">
+          <button className="flex h-12 w-12 items-center justify-center rounded-full border border-[#D8DDE8] bg-white">
+            🔔
+          </button>
+
+          <div className="flex items-center gap-3 rounded-full bg-white px-4 py-2 shadow-sm">
+            <div className="text-right">
+              <p className="text-sm font-semibold">José Medino</p>
+
+              <p className="text-xs text-[#8A93A7]">
+                Nível Básico
+              </p>
+            </div>
+
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#324A73] font-bold text-white">
+              JM
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Tabs */}
-      <div className="flex gap-8 border-b mb-8">
-        <Tab icon={<Globe size={18} />} active>
+      <div className="mt-8 flex items-center gap-8 border-b border-[#D9DEE8]">
+        <button className="border-b-2 border-[#2A67D7] pb-3 text-sm font-semibold text-[#2A67D7]">
           Geral
-        </Tab>
+        </button>
 
-        <Tab icon={<Bell size={18} />}>
+        <button className="pb-3 text-sm font-medium text-[#7B8498] transition-colors hover:text-[#2A67D7]">
           Notificações
-        </Tab>
+        </button>
 
-        <Tab icon={<Shield size={18} />}>
+        <button className="pb-3 text-sm font-medium text-[#7B8498] transition-colors hover:text-[#2A67D7]">
           Privacidade
-        </Tab>
+        </button>
 
-        <Tab icon={<User size={18} />}>
+        <button className="pb-3 text-sm font-medium text-[#7B8498] transition-colors hover:text-[#2A67D7]">
           Conta
-        </Tab>
+        </button>
 
-        <Tab icon={<Palette size={18} />}>
+        <button className="pb-3 text-sm font-medium text-[#7B8498] transition-colors hover:text-[#2A67D7]">
           Aparência
-        </Tab>
+        </button>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
+      {/* Conteúdo */}
+      <div className="mt-6 grid grid-cols-12 gap-6">
         {/* Coluna esquerda */}
-        <div className="col-span-8 space-y-8">
-          <Card title="Configurações gerais">
-            <SettingItem
-              icon={<Globe />}
-              title="Idioma da plataforma"
-              description="Escolha o idioma que deseja utilizar."
-            >
-              <Select value="Português (Brasil)" />
-            </SettingItem>
+        <div className="col-span-8">
+          <div className="rounded-[24px] border border-[#DCE2EE] bg-white p-6">
+            <h2 className="mb-6 text-lg font-bold text-[#274C9A]">
+              Configurações gerais
+            </h2>
 
-            <SettingItem
-              icon={<Clock3 />}
-              title="Fuso horário"
-              description="Defina o fuso horário para exibição correta dos horários."
-            >
-              <Select value="(UTC-03:00) Brasília" />
-            </SettingItem>
+            <div className="space-y-4"> 
+              <div className="flex items-center justify-between border-b border-[#E4E8F0] pb-4">
+                <div>
 
-            <SettingItem
-              icon={<Calendar />}
-              title="Formato de data"
-              description="Escolha como as datas serão exibidas."
-            >
-              <Select value="DD/MM/AAAA" />
-            </SettingItem>
+                  <h3 className="font-semibold text-[#243B77]">
+                    🌐 Idioma da plataforma
+                  </h3>
 
-            <SettingItem
-              icon={<Clock3 />}
-              title="Unidade de medida de tempo"
-              description="Escolha como o tempo será exibido."
-            >
-              <Select value="Horas e minutos" />
-            </SettingItem>
-          </Card>
+                  <p className="text-sm text-[#7B8498]">     
+                          Escolha o idioma que deseja utilizar.
+                  </p>
+                </div>
 
-          <Card title="Preferências de estudo">
-            <SwitchItem
-              icon={<Bookmark />}
-              title="Lembrar onde parei"
-              description="Retomar automaticamente o último conteúdo estudado."
-            />
+                <select className="w-[220px] rounded-xl border border-[#DCE2EE] bg-white px-4 py-2 text-sm text-[#4B5565] hover:border-[#2A67D7]">
+                  <option>Português (Brasil)</option>
+                </select>
+              </div>
 
-            <SwitchItem
-              icon={<Lightbulb />}
-              title="Mostrar dicas rápidas"
-              description="Exibir dicas durante os estudos e simulados."
-            />
+              <div className="flex items-center justify-between border-b border-[#E4E8F0] pb-4">
+                <div>
+                  <h3 className="font-semibold text-[#243B77]">
+                    🕒 Fuso horário
+                  </h3>
 
-            <SwitchItem
-              icon={<Volume2 />}
-              title="Sons da plataforma"
-              description="Ativar efeitos sonoros em ações da plataforma."
-            />
+                  <p className="text-sm text-[#7B8498]">
+                    Defina o fuso horário para exibição correta dos horários.
+                  </p>
+                </div>
 
-            <SwitchItem
-              icon={<TriangleAlert />}
-              title="Confirmação antes de sair"
-              description="Exibir alerta ao tentar sair de uma questão ou simulado."
-            />
-          </Card>
+                <select className="w-[220px] rounded-xl border border-[#DCE2EE] bg-white px-4 py-2 text-sm text-[#4B5565] hover:border-[#2A67D7]">
+                  <option>(UTC-03:00) Brasília</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between border-b border-[#E4E8F0] pb-4">
+                <div>
+                  <h3 className="font-semibold text-[#243B77]">
+                    📅 Formato de data
+                  </h3>
+
+                  <p className="text-sm text-[#7B8498]">
+                    Escolha como as datas serão exibidas.
+                  </p>
+                </div>
+
+                <select className="w-[220px] rounded-xl border border-[#DCE2EE] bg-white px-4 py-2 text-sm text-[#4B5565] hover:border-[#2A67D7]">
+                  <option>DD/MM/AAAA</option>
+                </select>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-[#243B77]">
+                    ⏱ Unidade de medida de tempo
+                  </h3>
+
+                  <p className="text-sm text-[#7B8498]">
+                    Escolha como o tempo será exibido.
+                  </p>
+                </div>
+
+                <select className="w-[220px] rounded-xl border border-[#DCE2EE] bg-white px-4 py-2 text-sm text-[#4B5565] hover:border-[#2A67D7]">
+                  <option>Horas e minutos</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Coluna direita */}
-        <div className="col-span-4 space-y-8">
-          <Card title="Resumo das preferências">
-            <SummaryItem
-              label="Idioma"
-              value="Português (Brasil)"
-            />
+        <div className="col-span-4">
+          <div className="rounded-[24px] border border-[#DCE2EE] bg-white p-6">
+            <h2 className="mb-6 text-lg font-bold text-[#274C9A]">
+              Resumo das preferências
+            </h2>
 
-            <SummaryItem
-              label="Fuso horário"
-              value="(UTC-03:00) Brasília"
-            />
+            <div className="space-y-4 text-sm">
+              <div>
+                <p className="font-semibold">Idioma</p>
+                <p className="text-[#7B8498]">
+                  Português (Brasil)
+                </p>
+              </div>
 
-            <SummaryItem
-              label="Notificações"
-              value="Ativadas"
-            />
+              <div>
+                <p className="font-semibold">Fuso horário</p>
+                <p className="text-[#7B8498]">
+                  (UTC-03:00) Brasília
+                </p>
+              </div>
 
-            <SummaryItem
-              label="Tema"
-              value="Claro"
-            />
-          </Card>
+              <div>
+                <p className="font-semibold">Notificações</p>
+                <p className="text-[#7B8498]">
+                  Ativadas
+                </p>
+              </div>
 
-          <Card title="Ações rápidas">
-            <ActionItem
-              icon={<RotateCcw size={18} />}
-              text="Redefinir preferências"
-            />
-
-            <ActionItem
-              icon={<Download size={18} />}
-              text="Exportar dados"
-            />
-
-            <ActionItem
-              icon={<Trash2 size={18} />}
-              text="Excluir conta"
-            />
-
-            <ActionItem
-              icon={<HelpCircle size={18} />}
-              text="Central de ajuda"
-            />
-          </Card>
+              <div>
+                <p className="font-semibold">Tema</p>
+                <p className="text-[#7B8498]">
+                  Claro
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ==========================
-   TYPES
-========================== */
-
-interface CardProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-interface TabProps {
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  active?: boolean;
-}
-
-interface SettingItemProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  children: React.ReactNode;
-}
-
-interface SelectProps {
-  value: string;
-}
-
-interface SwitchItemProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-interface SummaryItemProps {
-  label: string;
-  value: string;
-}
-
-interface ActionItemProps {
-  icon: React.ReactNode;
-  text: string;
-}
-
-/* ==========================
-   COMPONENTS
-========================== */
-
-function Card({
-  title,
-  children,
-}: CardProps) {
-  return (
-    <div className="bg-white rounded-3xl shadow-sm p-6">
-      <h2 className="text-[#152E88] text-xl font-semibold mb-6">
-        {title}
+      <div className="mt-6 grid grid-cols-12 gap-6">
+  {/* Preferências */}
+  <div className="col-span-8">
+    <div className="rounded-[24px] border border-[#DCE2EE] bg-white p-6">
+      <h2 className="mb-6 text-lg font-bold text-[#274C9A]">
+        Preferências de estudo
       </h2>
 
-      {children}
-    </div>
-  );
-}
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-[#243B77]">
+              🔖 Lembrar onde parei
+            </h3>
 
-function Tab({
-  icon,
-  children,
-  active = false,
-}: TabProps) {
-  return (
-    <button
-      className={`flex items-center gap-2 pb-3 transition ${
-        active
-          ? "text-[#152E88] border-b-2 border-[#152E88]"
-          : "text-gray-500"
-      }`}
-    >
-      {icon}
-      {children}
-    </button>
-  );
-}
+            <p className="text-sm text-[#7B8498]">
+              Retomar automaticamente o último conteúdo estudado.
+            </p>
+          </div>
 
-function SettingItem({
-  icon,
-  title,
-  description,
-  children,
-}: SettingItemProps) {
-  return (
-    <div className="flex items-center justify-between py-4 border-b last:border-b-0">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-blue-100 text-[#152E88] flex items-center justify-center">
-          {icon}
+          <button
+  className="relative h-6 w-11 rounded-full bg-[#2A67D7] transition-all"
+>
+  <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white" />
+</button>
         </div>
 
-        <div>
-          <h3 className="font-semibold">
-            {title}
-          </h3>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-[#243B77]">
+              💡 Mostrar dicas rápidas
+            </h3>
 
-          <p className="text-sm text-gray-500">
-            {description}
-          </p>
-        </div>
-      </div>
+            <p className="text-sm text-[#7B8498]">
+              Exibir dicas durante os estudos e simulados.
+            </p>
+          </div>
 
-      {children}
-    </div>
-  );
-}
-
-function Select({
-  value,
-}: SelectProps) {
-  return (
-    <select
-      aria-label={value}
-      className="border rounded-xl px-4 py-3 shadow-sm min-w-[220px]"
-      defaultValue={value}
-    >
-      <option>{value}</option>
-    </select>
-  );
-}
-
-function SwitchItem({
-  icon,
-  title,
-  description,
-}: SwitchItemProps) {
-  return (
-    <div className="flex items-center justify-between py-4 border-b last:border-b-0">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-blue-100 text-[#152E88] flex items-center justify-center">
-          {icon}
+          <button
+  className="relative h-6 w-11 rounded-full bg-[#2A67D7] transition-all"
+>
+  <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white" />
+</button>
         </div>
 
-        <div>
-          <h3 className="font-semibold">
-            {title}
-          </h3>
+        <div className="flex items-center justify-between">
+          <div>
+            
+            <h3 className="font-semibold text-[#243B77]">
+              🔊  Sons da plataforma
+            </h3>
 
-          <p className="text-sm text-gray-500">
-            {description}
-          </p>
+            <p className="text-sm text-[#7B8498]">
+              Ativar efeitos sonoros nas ações da plataforma.
+            </p>
+          </div>
+<button
+  className="relative h-6 w-11 rounded-full bg-[#2A67D7] transition-all"
+>
+  <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white" />
+</button>
+          
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-[#243B77]">
+             ⚠️ Confirmação antes de sair
+            </h3>
+
+            <p className="text-sm text-[#7B8498]">
+              Exibir alerta ao tentar sair de uma questão.
+            </p>
+          </div>
+
+          <button
+  className="relative h-6 w-11 rounded-full bg-[#2A67D7] transition-all"
+>
+  <span className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white" />
+</button>
         </div>
       </div>
-
-      <input
-        type="checkbox"
-        defaultChecked
-        aria-label={title}
-        className="w-5 h-5"
-      />
     </div>
-  );
-}
+  </div>
 
-function SummaryItem({
-  label,
-  value,
-}: SummaryItemProps) {
-  return (
-    <div className="mb-5">
-      <p className="font-medium">
-        {label}
-      </p>
+  {/* Ações rápidas */}
+<div className="col-span-4">
+  <div className="rounded-[24px] border border-[#DCE2EE] bg-white p-6">
+    <h2 className="mb-6 text-lg font-bold text-[#274C9A]">
+      Ações rápidas
+    </h2>
 
-      <p className="text-gray-500">
-        {value}
-      </p>
+    <div className="divide-y divide-[#EDF1F7]">
+      <button
+        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium text-[#4B5565] transition-all duration-200 hover:bg-[#F3F7FF] hover:text-[#2A67D7] hover:translate-x-1 cursor-pointer"
+      >
+        <span>Redefinir preferências</span>
+        <span>›</span>
+      </button>
+
+      <button
+        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium text-[#4B5565] transition-all duration-200 hover:bg-[#F3F7FF] hover:text-[#2A67D7] hover:translate-x-1 cursor-pointer"
+      >
+        <span>Exportar dados</span>
+        <span>›</span>
+      </button>
+
+      <button
+        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium text-[#D85B5B] transition-all duration-200 hover:bg-[#FFF5F5] hover:text-[#C0392B] hover:translate-x-1 cursor-pointer"
+      >
+        <span>Excluir conta</span>
+        <span>›</span>
+      </button>
+
+      <button
+        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium text-[#4B5565] transition-all duration-200 hover:bg-[#F3F7FF] hover:text-[#2A67D7] hover:translate-x-1 cursor-pointer"
+      >
+        <span>Central de ajuda</span>
+        <span>›</span>
+      </button>
     </div>
-  );
-}
-
-function ActionItem({
-  icon,
-  text,
-}: ActionItemProps) {
-  return (
-    <button className="flex items-center justify-between w-full py-4 border-b last:border-b-0 hover:text-[#152E88] transition">
-      <div className="flex items-center gap-3">
-        {icon}
-        {text}
-      </div>
-
-      <ChevronRight size={18} />
-    </button>
+  </div>
+</div>
+</div>
+    </section>
   );
 }
