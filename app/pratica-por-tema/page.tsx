@@ -196,7 +196,7 @@ export default function PraticaPorTemaPage() {
         <div className="flex items-start gap-3">
           <SidebarToggleButton />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-blue-deep sm:text-5xl">
+<h1 className="text-3xl font-extrabold tracking-tight text-blue-deep sm:text-[48px]">
               Praticar por Tema
             </h1>
             <p className="mt-1 text-sm text-[#5f6d84]">

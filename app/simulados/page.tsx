@@ -227,7 +227,7 @@ export default function SimuladosPage() {
               <input type="checkbox" className="h-4 w-4 rounded border-border text-primary" />
               Marcar para revisar depois
             </label>
-            <button className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)]">
+            <button className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)] transition-all duration-300 hover:scale-105 hover:bg-blue-700 hover:shadow-xl cursor-pointer">
               Proxima questao
             </button>
           </div>

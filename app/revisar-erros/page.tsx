@@ -45,6 +45,22 @@ function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
+function ArrowRightIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
 function BellIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -198,7 +214,7 @@ function TopicIcon({ icon, color }: { icon: MissedQuestion["icon"]; color: strin
 function MissedQuestionCard({ item, active = false }: { item: MissedQuestion; active?: boolean }) {
   return (
     <button
-      className={`flex w-full items-center gap-3 rounded-[16px] border px-3 py-3 text-left transition-colors ${
+      className={`flex w-full items-center gap-3 rounded-[16px] border px-3 py-2 text-left transition-colors ${
         active ? "border-[#d8e2f3] bg-[#f8fbff]" : "border-[#e9edf5] bg-white hover:bg-slate-50"
       }`}
     >
@@ -271,8 +287,8 @@ export default function RevisarErrosPage() {
         <aside className="border-b border-[#e8edf6] p-4 2xl:border-b-0 2xl:border-r">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-extrabold text-[#202637]">Suas questoes erradas (24)</h2>
-            <button className="rounded-full border border-[#d7dce5] bg-[#f8f9fb] px-3 py-1 text-xs font-semibold text-[#556074]">
-              Mais Recentes
+            <button className="rounded-full border border-[#d7dce5] bg-[#f8f9fb] px-3 py-1 text-xs font-semibold text-[#556074] transition-all duration-200 hover:bg-[#eef2f8] hover:border-[#b8c2d3] hover:shadow-sm hover:scale-105 cursor-pointer">
+              Mais Recentes ▼
             </button>
           </div>
 
@@ -282,7 +298,7 @@ export default function RevisarErrosPage() {
             ))}
           </div>
 
-          <button className="mx-auto mt-5 flex items-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2 text-sm font-semibold text-[#515d72] shadow-sm">
+          <button className="mx-auto mt-5 flex items-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2 text-sm font-semibold text-[#515d72] shadow-sm transition-all duration-200 hover:bg-[#f8fbff] hover:border-[#9fb8e6] hover:text-[#2f5fbf] hover:shadow-md hover:scale-105 cursor-pointer">
             Carregar mais
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#eef2f8] text-xs">+</span>
           </button>
@@ -336,7 +352,7 @@ export default function RevisarErrosPage() {
           </div>
 
           <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <div className="rounded-[16px] border border-[#d3ead5] bg-[#e9f7e9] px-4 py-4">
+            <div className="rounded-[16px] border border-[#d3ead5] bg-[#e9f7e9] px-3 py-3">
               <p className="text-xs font-bold uppercase tracking-[0.06em] text-[#388443]">Resposta correta</p>
               <div className="mt-2 flex items-start gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#95ce97] bg-white text-sm font-extrabold text-[#3f8f46]">
@@ -351,7 +367,7 @@ export default function RevisarErrosPage() {
               </div>
             </div>
 
-            <div className="rounded-[16px] border border-[#efd8d8] bg-[#f9ecec] px-4 py-4">
+<div className="rounded-[16px] border border-[#efd8d8] bg-[#f9ecec] px-3 py-3">
               <p className="text-xs font-bold uppercase tracking-[0.06em] text-[#b44f5b]">Sua resposta</p>
               <div className="mt-2 flex items-start gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#da9b9b] bg-white text-sm font-extrabold text-[#8a4c4c]">
@@ -367,29 +383,40 @@ export default function RevisarErrosPage() {
             </div>
           </div>
 
-          <div className="mt-5 flex gap-3 rounded-[18px] border border-[#cad6f6] bg-[#eef3ff] px-4 py-4">
-            <TutorIcon />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-extrabold text-[#3457b9]">Explicacao do Tutor Inteligente</p>
-              <p className="mt-1 text-sm leading-6 text-[#34405a]">
-                Essa infracao e classificada como media porque coloca em risco a seguranca dos pedestres, mas nao chega a causar dano direto. Lembre-se: atitudes que ameacam a seguranca no transito sempre sao infracoes!
-              </p>
-            </div>
-            <button className="self-start rounded-xl border border-[#b6c7f0] bg-white px-4 py-2 text-sm font-semibold text-[#4964bb]">
-              Entendi!
-            </button>
-          </div>
+<div className="mt-4 flex items-start gap-3 rounded-[18px] border border-[#cad6f6] bg-[#eef3ff] px-3 py-3">
+  <TutorIcon />
+
+  <div className="min-w-0 flex-1">
+    <p className="text-sm font-extrabold text-[#3457b9]">
+      Explicacao do Tutor Inteligente
+    </p>
+
+    <p className="mt-1 text-sm leading-5 text-[#34405a]">
+      Essa infracao e classificada como media porque coloca em risco a
+      seguranca dos pedestres, mas nao chega a causar dano direto.
+      Lembre-se: atitudes que ameacam a seguranca no transito sempre sao
+      infracoes!
+    </p>
+  </div>
+
+  <button
+    type="button"
+    className="shrink-0 self-start rounded-lg border border-[#b6c7f0] bg-white px-3 py-1.5 text-sm font-semibold text-[#4964bb] transition-all duration-200 hover:bg-[#4964bb] hover:text-white hover:border-[#4964bb] hover:shadow-md cursor-pointer"
+  >
+    Entendi!
+  </button>
+</div>
 
           <div className="mt-5 flex flex-col gap-3 border-t border-[#e8edf6] pt-4 md:flex-row md:items-center md:justify-between">
-            <button className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-[#4d7ae2] shadow-sm">
+            <button className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-[#4d7ae2] shadow-sm transition-all duration-200 hover:bg-[#eef4ff] hover:border-[#4d7ae2] hover:shadow-md hover:-translate-y-0.5 cursor-pointer">
               <ArrowLeftIcon className="h-4 w-4" />
               Anterior
             </button>
-            <label className="flex items-center gap-3 text-sm font-semibold text-[#2b3347]">
-              <BookmarkIcon className="h-5 w-5" />
+            <label className="flex items-center gap-3 text-sm font-semibold text-[#2b3347] transition-all duration-200 hover:text-[#4d7ae2] hover:scale-105 cursor-pointer">
+              <BookmarkIcon className="h-5 w-5 transition-colors duration-200 group-hover:text-[#4d7ae2]" />
               Marcar para revisar depois
             </label>
-            <button className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)]">
+            <button className="flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)] transition-all duration-300 hover:scale-105 hover:bg-blue-700 hover:shadow-xl cursor-pointer">
               Proxima questao
             </button>
           </div>
