@@ -11,10 +11,12 @@ import {
 } from "recharts";
 
 type PerformanceChartCardProps = {
+  className?: string;
   values: number[];
 };
 
 export function PerformanceChartCard({
+  className,
   values,
 }: PerformanceChartCardProps) {
   const data = values.map((value, index) => ({
@@ -24,8 +26,8 @@ export function PerformanceChartCard({
   }));
 
   return (
-    <article className="rounded-[24px] border border-border bg-surface p-5 shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
-      <div className="rounded-[18px] bg-linear-to-b from-[#f8fbff] to-[#eff4fb] p-4">
+    <article className={`rounded-[24px] border border-border bg-surface p-5 shadow-[0_12px_24px_rgba(19,32,58,0.08)] ${className ?? ""}`}>
+      <div className="flex h-full flex-col justify-center rounded-[18px] bg-linear-to-b from-[#f8fbff] to-[#eff4fb] p-4">
         <div className="h-[270px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
