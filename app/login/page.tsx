@@ -1,3 +1,5 @@
+"use client";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Mail,
@@ -6,9 +8,11 @@ import {
   BookOpen,
   Bot,
   ClipboardCheck,
+  Sidebar,
 } from "lucide-react";
 
 export default function LoginPage() {
+  
   return (
     <main className="flex min-h-screen bg-white">
       {/* LADO ESQUERDO */}
@@ -18,15 +22,15 @@ export default function LoginPage() {
         <div className="relative z-10 flex h-full flex-col px-20 py-10">
           {/* Logo */}
           <div className="mb-10">
-            <h1 className="text-5xl font-black text-[#0C5DA8]">
-              TUTOR CNH
-            </h1>
-
-            <p className="mt-2 text-sm tracking-widest text-[#1060EC]">
-              SEU CAMINHO PARA APROVAÇÃO!
-            </p>
-          </div>
-
+          <Image
+          src="/tutor-cnh-logo.png"
+          alt="Tutor CNH"
+          width={311}
+          height={236}
+          className="h-auto w-[180px] object-contain"
+          priority/>
+        </div>
+       
           {/* Texto principal */}
           <div className="mt-10 max-w-md">
             <h2 className="text-5xl font-light italic leading-tight text-white">
@@ -111,7 +115,7 @@ export default function LoginPage() {
           <form className="space-y-8">
             {/* Email */}
             <div>
-              <label className="mb-3 block text-lg">
+              <label className="mb-3 block text-lg font-medium text-[#222222]">
                 E-mail
               </label>
 
@@ -119,16 +123,15 @@ export default function LoginPage() {
                 <Mail className="text-gray-400" />
 
                 <input
-                  type="email"
-                  placeholder="Digite seu e-mail"
-                  className="ml-4 w-full bg-transparent outline-none"
-                />
+                type="email"
+                placeholder="Digite seu e-mail"
+                className="ml-4 w-full bg-transparent text-[#222222] placeholder:text-[#9CA3AF] outline-none"/>
               </div>
             </div>
 
             {/* Senha */}
             <div>
-              <label className="mb-3 block text-lg">
+              <label className="mb-3 block text-lg font-medium text-[#222222]">
                 Senha
               </label>
 
