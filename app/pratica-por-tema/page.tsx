@@ -1,3 +1,4 @@
+import { BellIcon } from "lucide-react";
 import { SidebarToggleButton } from "../_components/sidebar-toggle-button";
 
 type ThemeCard = {
@@ -205,13 +206,18 @@ export default function PraticaPorTemaPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 self-start rounded-full bg-white px-3 py-2 shadow-[0_10px_24px_rgba(19,32,58,0.08)]">
-          <div className="text-right">
-            <p className="text-sm font-semibold text-foreground">Josue Medino</p>
-            <p className="text-xs text-text-muted">Nivel Basico</p>
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-linear-to-br from-slate-800 to-slate-500 text-sm font-black text-white">
-            JM
+        <div className="flex items-center gap-3 self-start xl:self-auto">
+          <button className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-text-muted shadow-sm">
+            <BellIcon />
+          </button>
+          <div className="flex items-center gap-3 rounded-full bg-white px-3 py-2 shadow-[0_10px_24px_rgba(19,32,58,0.08)]">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-[#222222]">Josue Medino</p>
+              <p className="text-xs text-text-muted">Nivel Basico</p>
+            </div>
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-linear-to-br from-slate-800 to-slate-500 text-sm font-black text-white">
+              JM
+            </div>
           </div>
         </div>
       </header>
