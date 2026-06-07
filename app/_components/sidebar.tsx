@@ -209,14 +209,15 @@ export function Sidebar() {
           isExpanded ? "justify-between lg:px-2" : "justify-center"
         }`}
       >
-        <button
+        <Link
+          href="/"
           className={`flex rounded-lg px-2 py-1.5 hover:bg-white/8 ${
             isExpanded ? "items-center gap-2" : "justify-center"
           }`}
         >
           <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold">LO</span>
           {isExpanded ? <span>Log out</span> : null}
-        </button>
+        </Link>
         {isExpanded ? (
           <span className="hidden rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold lg:inline">
             UI
