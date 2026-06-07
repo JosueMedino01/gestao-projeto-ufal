@@ -1,15 +1,22 @@
+"use client";
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function CadastroPage() {
+  
+  const [dataNascimento, setDataNascimento] = useState("");
   return (
     <main className="min-h-screen flex bg-white">
       {/* Lado esquerdo */}
       <section className="hidden lg:flex w-[40%] bg-[#152E88] text-white flex-col justify-center px-24">
-        <img
-          src="/logo.png"
-          alt="Tutor CNH"
-          className="w-56 mb-10"
-        />
+        <Image
+        src="/tutor-cnh-logo.png"
+        alt="Tutor CNH"
+        width={311}
+        height={236}
+        className="mb-10 w-[180px] h-auto"/>
 
         <h1 className="text-5xl italic font-light leading-tight">
           Crie sua conta e comece hoje mesmo a{" "}
@@ -56,11 +63,11 @@ export default function CadastroPage() {
       {/* Formulário */}
       <section className="flex-1 flex justify-center items-center p-10">
         <div className="w-full max-w-5xl bg-[#F5F5F5] rounded-xl shadow-md p-12">
-          <h2 className="text-center text-5xl font-medium">
+          <h2 className="text-center text-5xl font-medium text-[#222222]">
             Crie sua conta
           </h2>
 
-          <p className="text-center text-gray-500 mt-4">
+          <p className="mt-4 text-center text-[#6A7487]">
             Preencha os dados abaixo para começar
           </p>
 
@@ -70,7 +77,7 @@ export default function CadastroPage() {
               <div>
                 <label
                   htmlFor="nomeCompleto"
-                  className="block mb-2 text-lg"
+                  className="mb-2 block text-lg font-medium text-[#222222]"
                 >
                   Nome completo
                 </label>
@@ -81,7 +88,7 @@ export default function CadastroPage() {
                   type="text"
                   placeholder="Digite seu nome completo"
                   aria-label="Nome completo"
-                  className="w-full h-16 rounded-2xl border px-5 bg-white"
+                  className="h-16 w-full rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] placeholder:text-[#9AA3B2] focus:border-[#2A67D7] focus:outline-none"
                 />
               </div>
 
@@ -89,19 +96,17 @@ export default function CadastroPage() {
               <div>
                 <label
                   htmlFor="dataNascimento"
-                  className="block mb-2 text-lg"
+                  className="mb-2 block text-lg font-medium text-[#222222]"
                 >
                   Data de nascimento
                 </label>
 
+                
                 <input
-                  id="dataNascimento"
-                  name="dataNascimento"
                   type="date"
-                  aria-label="Data de nascimento"
-                  title="Data de nascimento"
-                  className="w-full h-16 rounded-2xl border px-5 bg-white"
-                />
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
+                  className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"/>
               </div>
             </div>
 
@@ -109,7 +114,7 @@ export default function CadastroPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block mb-2 text-lg"
+                className="mb-2 block text-lg font-medium text-[#222222]"
               >
                 E-mail
               </label>
@@ -121,7 +126,7 @@ export default function CadastroPage() {
                 placeholder="Digite seu e-mail"
                 aria-label="E-mail"
                 autoComplete="email"
-                className="w-full h-16 rounded-2xl border px-5 bg-white"
+                className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
               />
             </div>
 
@@ -129,7 +134,7 @@ export default function CadastroPage() {
             <div>
               <label
                 htmlFor="senha"
-                className="block mb-2 text-lg"
+                className="mb-2 block text-lg font-medium text-[#222222]"
               >
                 Senha
               </label>
@@ -141,7 +146,7 @@ export default function CadastroPage() {
                 placeholder="Crie sua senha"
                 aria-label="Senha"
                 autoComplete="new-password"
-                className="w-full h-16 rounded-2xl border px-5 bg-white"
+                className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
               />
             </div>
 
@@ -149,7 +154,7 @@ export default function CadastroPage() {
             <div>
               <label
                 htmlFor="confirmarSenha"
-                className="block mb-2 text-lg"
+                className="mb-2 block text-lg font-medium text-[#222222]"
               >
                 Confirmar senha
               </label>
@@ -161,7 +166,7 @@ export default function CadastroPage() {
                 placeholder="Confirme sua senha"
                 aria-label="Confirmar senha"
                 autoComplete="new-password"
-                className="w-full h-16 rounded-2xl border px-5 bg-white"
+                className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
               />
             </div>
 
@@ -173,11 +178,11 @@ export default function CadastroPage() {
             </button>
           </form>
 
-          <p className="text-center mt-8 text-gray-500">
+          <p className="mt-8 text-center text-[#6A7487]">
             Já tem uma conta?{" "}
             <Link
               href="/login"
-              className="text-[#23248D] font-medium hover:underline"
+              className="font-semibold text-[#152E88] hover:underline"
             >
               Fazer login
             </Link>
