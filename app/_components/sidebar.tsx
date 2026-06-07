@@ -127,14 +127,14 @@ function CogIcon({ className }: IconProps) {
 }
 
 const menuItems = [
-  { label: "Inicio", href: "/", icon: HomeIcon },
-  { label: "Simulados", href: "/simulados", icon: ClipboardIcon },
-  { label: "Pratica por Tema", href: "/pratica-por-tema", icon: BookIcon },
-  { label: "Revisar Erros", href: "/revisar-erros", icon: AlertIcon },
-  { label: "Desempenho", href: "/desempenho", icon: MedalIcon },
-  { label: "Tutor Inteligente", href: "/tutor-inteligente", icon: BotIcon },
-  { label: "Perfil", href: "/perfil", icon: UserIcon },
-  { label: "Configuracoes", href: "/configuracoes", icon: CogIcon },
+  { label: "Inicio", href: "/dashboard", icon: HomeIcon },
+  { label: "Simulados", href: "/dashboard/simulados", icon: ClipboardIcon },
+  { label: "Pratica por Tema", href: "/dashboard/pratica-por-tema", icon: BookIcon },
+  { label: "Revisar Erros", href: "/dashboard/revisar-erros", icon: AlertIcon },
+  { label: "Desempenho", href: "/dashboard/desempenho", icon: MedalIcon },
+  { label: "Tutor Inteligente", href: "/dashboard/tutor-inteligente", icon: BotIcon },
+  { label: "Perfil", href: "/dashboard/perfil", icon: UserIcon },
+  { label: "Configuracoes", href: "/dashboard/configuracoes", icon: CogIcon },
 ] as const;
 
 function SidebarLogo() {
