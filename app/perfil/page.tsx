@@ -1,5 +1,5 @@
 "use client";
-
+import { SidebarToggleButton } from "../_components/sidebar-toggle-button";
 import {
   Bell,
   ChevronRight,
@@ -22,67 +22,59 @@ export default function PerfilPage() {
       <main className="flex-1 p-10">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-[#0C5DA8] text-5xl font-bold">
-              Meu Perfil
-            </h1>
+         <div className="flex items-start gap-4"><SidebarToggleButton /><div>
+          <h1 className="text-[#0C5DA8] text-5xl font-bold">
+          Meu Perfil
+          </h1>
 
-            <p className="text-gray-700 mt-2">
-              Gerencie suas informações e preferências da sua conta.
-            </p>
-          </div>
+        <p className="text-gray-700 mt-2">
+          Gerencie suas informações e preferências da sua conta.
+        </p>
+        </div>
+      </div>
 
           <div className="flex items-center gap-4">
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="w-14 h-14 bg-white rounded-2xl shadow flex items-center justify-center"
-            >
-              <Bell />
-            </button>
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
+            <Bell className="h-6 w-6 text-[#555]" />
+           </button>
 
-            <img
-              src="/avatar.jpg"
-              alt="Avatar"
-              className="w-16 h-16 rounded-full object-cover"
-            />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-500 text-lg font-black text-white">
+          JM
           </div>
         </div>
-
+      </div>
         {/* Card principal */}
         <div className="bg-white rounded-3xl shadow p-10 mb-8">
-          <div className="grid grid-cols-2 gap-10">
-            {/* Perfil */}
+          <div className="grid gap-10 xl:grid-cols-2">
+         {/* Perfil */}
             <div className="flex gap-8">
               <div className="relative">
-                <img
-                  src="/avatar.jpg"
-                  alt=""
-                  className="w-40 h-40 rounded-full object-cover"
-                />
-
-                <button
-                  type="button"
-                  className="absolute bottom-2 right-2 bg-white shadow rounded-full p-2"
-                  aria-label="Editar foto de perfil"
-                  title="Editar foto de perfil"
-                >
-                  <Camera size={18} />
-                </button>
+              <div className="flex h-40 w-40 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-500 text-5xl font-black text-white">
+              JM
               </div>
 
-              <div>
-                <div className="flex items-center gap-4">
-                  <h2 className="text-[#0C5DA8] text-5xl font-medium">
-                    Josué Medino
-                  </h2>
+            <button
+              type="button"
+              className="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg">
+            <Camera size={20} className="text-[#666]" />
+          </button>
+        </div>
 
-                  <span className="px-4 py-2 bg-blue-100 text-[#152E88] rounded-lg">
-                    Aluno
-                  </span>
-                </div>
+          <div>
+            <div className="flex items-center gap-4">
+              <h2 className="text-[#0C5DA8] text-5xl font-medium">
+              Josué Medino
+              </h2>
 
-                <div className="mt-6 space-y-3">
+          <span className="px-4 py-2 bg-blue-100 text-[#152E88] rounded-lg">
+          Aluno
+          </span>
+        </div>
+
+                <div className="mt-6 space-y-3 text-[#222]">
                   <div className="flex items-center gap-3">
                     <Mail size={18} />
                     <span>josue.medino@gmail.com</span>
@@ -102,20 +94,20 @@ export default function PerfilPage() {
             </div>
 
             {/* Nível */}
-            <div className="border-l pl-10 flex items-center gap-8">
+            <div className="border-l border-[#d9dce5] pl-10 flex items-center gap-8">
               <ShieldCheck
                 size={90}
                 className="text-green-700"
               />
 
               <div className="flex-1">
-                <p>Nível Atual</p>
+                <p className="text-[#222]">Nível Atual</p>
 
                 <h3 className="text-5xl font-semibold text-green-700">
                   Básico
                 </h3>
 
-                <p className="mt-2">
+                <p className="mt-2 text-[#444]">
                   Continue estudando!
                 </p>
 
@@ -134,7 +126,7 @@ export default function PerfilPage() {
         </div>
 
         {/* Cards inferiores */}
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid gap-8 xl:grid-cols-2">
           {/* Informações */}
           <div className="bg-white rounded-3xl shadow p-8">
             <h2 className="text-[#152E88] text-2xl font-semibold mb-8">
@@ -173,7 +165,8 @@ export default function PerfilPage() {
               />
             </div>
 
-            <button className="w-full mt-8 bg-[#152E88] text-white rounded-2xl py-4 font-medium">
+            <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#152E88] py-4 font-medium text-white transition hover:bg-[#0f236b]">
+              <User size={18} />
               Editar informações
             </button>
           </div>
@@ -211,7 +204,8 @@ export default function PerfilPage() {
               />
             </div>
 
-            <button className="w-full mt-8 bg-[#152E88] text-white rounded-2xl py-4 font-medium">
+            <button className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#152E88] py-4 font-medium text-white transition hover:bg-[#0f236b]">
+              <Settings size={18} />
               Editar preferências
             </button>
           </div>
@@ -236,12 +230,10 @@ function InfoRow({
 }: InfoRowProps) {
   return (
     <div className="flex items-center border-b pb-3">
-      <div className="mr-3">{icon}</div>
+      <div className="mr-3 text-[#5d6b82]">{icon}</div>
+    <div className="flex-1 text-[#444]">{label}</div>
 
-      <div className="flex-1">{label}</div>
-
-      <div className={valueClass}>{value}</div>
-
+    <div className={valueClass ?? "text-[#222]"}>{value}</div>
       <ChevronRight
         size={18}
         className="ml-4 text-gray-400"
