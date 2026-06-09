@@ -168,7 +168,7 @@ export default function LoginPage() {
             </span>
 
             <Link
-              href="/cadastro"
+              href="auth/cadastro"
               className="ml-2 font-medium text-[#23248D]"
             >
               Cadastre-se
