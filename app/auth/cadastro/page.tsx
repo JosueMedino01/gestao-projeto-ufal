@@ -202,10 +202,9 @@ export default function CadastroPage() {
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full h-16 bg-[#152E88] text-white rounded-2xl text-xl font-medium hover:bg-[#10246b] transition-colors"
-            >
+            <button type="button" onClick={() => router.push("/auth/login")}
+              className="h-[70px] w-full rounded-2xl bg-[#152E88] text-xl font-semibold text-white transition hover:bg-[#0f236a]">
+
               Criar minha conta
             </button>
           </form>
@@ -213,7 +212,7 @@ export default function CadastroPage() {
           <p className="mt-8 text-center text-[#6A7487]">
             Já tem uma conta?{" "}
             <Link
-              href="/login"
+              href="auth/login"
               className="font-semibold text-[#152E88] hover:underline"
             >
               Fazer login
