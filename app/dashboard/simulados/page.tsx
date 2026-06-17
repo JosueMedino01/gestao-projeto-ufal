@@ -1,282 +1,324 @@
+﻿"use client";
+
+import { Bell, CheckCircle2, Clock3, LoaderCircle, XCircle } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "../../_components/auth-provider";
 import { SidebarToggleButton } from "../../_components/sidebar-toggle-button";
+import { UserPill } from "../../_components/user-pill";
+import { api, type Questao, type RespostaQuestao, type Simulado } from "@/lib/api";
 
-type Choice = {
-  letter: string;
-  text: string;
-  selected?: boolean;
-};
-
-type QuestionChip = {
+function QuestionStatus({
+  number,
+  status,
+  onClick,
+}: {
   number: number;
-  status: "answered" | "unanswered" | "current" | "marked";
-};
-
-const choices: Choice[] = [
-  { letter: "A", text: "De a preferencia." },
-  { letter: "B", text: "Parada obrigatoria.", selected: true },
-  { letter: "C", text: "Proibido estacionar." },
-  { letter: "D", text: "Sentido proibido." },
-  { letter: "E", text: "Velocidade maxima permitida." },
-];
-
-const questionMap: QuestionChip[] = Array.from(
-  { length: 30 },
-  (_, index) => {
-    const number = index + 1;
-
-    if ([1, 2, 4, 5, 6 ].includes(number)) {
-      return { number, status: "answered" };
-    }
-
-    if (number === 7) {
-      return { number, status: "current" };
-    }
-
-    if (number === 3) {
-      return { number, status: "marked" };
-    }
-
-    return { number, status: "unanswered" };
-  }
-);
-
-function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m15 18-6-6 6-6" />
-    </svg>
-  );
-}
-
-function BellIcon({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6.5 9a5.5 5.5 0 0 1 11 0c0 5.5 2 6.5 2 6.5h-15S6.5 14.5 6.5 9" />
-      <path d="M10 19a2 2 0 0 0 4 0" />
-    </svg>
-  );
-}
-
-function ExpandIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M15 4h5v5" />
-      <path d="m14 10 6-6" />
-      <path d="M9 20H4v-5" />
-      <path d="m10 14-6 6" />
-    </svg>
-  );
-}
-
-function PauseIcon({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <rect x="6" y="5" width="4" height="14" rx="1" />
-      <rect x="14" y="5" width="4" height="14" rx="1" />
-    </svg>
-  );
-}
-
-function ClockIcon({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  );
-}
-
-function StopSign() {
-  return (
-    <div className="relative mx-auto mt-8 h-[280px] w-[280px]">
-      <div
-        className="absolute inset-0 border-[4px] border-white bg-[#ff1e14] shadow-[0_12px_30px_rgba(255,30,20,0.22)]"
-        style={{
-          clipPath:
-            "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
-        }}
-      />
-      <div
-        className="absolute inset-[8px] border-[4px] border-white"
-        style={{
-          clipPath:
-            "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
-        }}
-      />
-      <div className="absolute inset-0 flex items-center justify-center text-[5rem] font-black tracking-[0.12em] text-white">
-        PARE
-      </div>
-    </div>
-  );
-}
-
-function ChoiceCard({ choice }: { choice: Choice }) {
-  return (
-    <button
-     className={`flex h-[92px] w-full items-center gap-5 rounded-[22px] border px-6 text-left transition-all ${
-  choice.selected
-    ? "border-[#c8d9ef] bg-[#dce8f7]"
-    : "border-[#e4e4e4] bg-white hover:bg-slate-50"
-}`}
-    >
-      <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border text-xl font-black ${choice.selected? "border-[#c4d8f0] bg-white text-[#111111]": "border-[#d8d8d8] bg-white text-[#111111]"}`}>{choice.letter}
-      </span>
-      <span className={`text-xl ${choice.selected? "font-semibold text-[#111111]": "font-medium text-[#111111]"}`}>{choice.text}
-      </span>
-    </button>
-  );
-}
-
-function QuestionStatus({ item }: { item: QuestionChip }) {
+  status: "answered" | "current" | "unanswered";
+  onClick: () => void;
+}) {
   const styles = {
     answered: "bg-[#daf0d6] text-[#436345]",
-    unanswered: "bg-[#efefef] text-[#4e4e4e]",
     current: "bg-[#243f9f] text-white",
-    marked: "bg-[#ffe49c] text-[#775c06]",
-  }[item.status];
+    unanswered: "bg-[#efefef] text-[#4e4e4e]",
+  }[status];
 
   return (
-    <button className={`flex h-14 w-14 items-center justify-center rounded-xl text-sm font-bold ${styles}`}>
-      {item.number}
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex h-8 w-8 items-center justify-center rounded-md text-xs font-bold ${styles}`}
+    >
+      {number}
     </button>
   );
 }
-function SpeakerIcon({ className = "h-5 w-5" }: { className?: string }) {
+
+function ChoiceCard({
+  letter,
+  text,
+  response,
+  onAnswer,
+  disabled,
+}: {
+  letter: string;
+  text: string;
+  response?: RespostaQuestao;
+  onAnswer: () => void;
+  disabled: boolean;
+}) {
+  const isCorrect = response?.resposta_correta === letter;
+  const isSelected = response?.alternativa_marcada === letter;
+  const isWrongSelection = isSelected && response && !response.acertou;
+
+  const stateClass = isCorrect
+    ? "border-[#b9dfba] bg-[#eff9ef] text-[#21592b]"
+    : isWrongSelection
+      ? "border-[#f0dede] bg-[#f8ebeb] text-[#7a3941]"
+      : isSelected
+        ? "border-[#cfe0f6] bg-[#dfeaf8] text-primary"
+        : "border-border bg-white text-foreground hover:bg-slate-50";
+
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
+    <button
+      type="button"
+      onClick={onAnswer}
+      disabled={disabled || Boolean(response)}
+      className={`flex w-full items-center gap-4 rounded-[20px] border px-4 py-4 text-left transition-colors disabled:cursor-default ${stateClass}`}
     >
-      <path d="M11 5L6 9H3v6h3l5 4V5z" />
-      <path d="M15 9a4 4 0 0 1 0 6" />
-      <path d="M17.5 6.5a7 7 0 0 1 0 11" />
-    </svg>
-  );
-}
-function ExitIcon({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-      <path d="M10 17l5-5-5-5" />
-      <path d="M15 12H3" />
-    </svg>
-  );
-}
-function BulbIcon({ className = "h-6 w-6" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M9 18h6" />
-      <path d="M10 22h4" />
-      <path d="M12 2a7 7 0 0 0-4 12c.8.8 1.5 1.8 1.7 3h4.6c.2-1.2.9-2.2 1.7-3A7 7 0 0 0 12 2z" />
-    </svg>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-current bg-white text-sm font-extrabold">
+        {letter}
+      </span>
+      <span className="text-base font-semibold">{text}</span>
+      {isCorrect ? <CheckCircle2 className="ml-auto h-5 w-5 text-[#3f8f46]" /> : null}
+      {isWrongSelection ? <XCircle className="ml-auto h-5 w-5 text-[#b44f5b]" /> : null}
+    </button>
   );
 }
 
 export default function SimuladosPage() {
+  const { token } = useAuth();
+  const [simulado, setSimulado] = useState<Simulado | null>(null);
+  const [questoes, setQuestoes] = useState<Questao[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [respostas, setRespostas] = useState<Record<number, RespostaQuestao>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAnswering, setIsAnswering] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const [error, setError] = useState("");
+
+  const currentQuestion = questoes[currentIndex];
+  const currentResponse = currentQuestion ? respostas[currentQuestion.id] : undefined;
+  const answeredCount = Object.keys(respostas).length;
+  const progress = questoes.length ? ((currentIndex + 1) / questoes.length) * 100 : 0;
+
+  async function startSimulado() {
+    if (!token) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setSimulado(null);
+    setQuestoes([]);
+    setRespostas({});
+    setCurrentIndex(0);
+
+    try {
+      const data = await api.criarSimulado(token);
+      setSimulado(data.simulado);
+      setQuestoes(data.questoes);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nao foi possivel iniciar o simulado.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function answerQuestion(questaoId: number, alternativa: string) {
+    if (!token || !simulado || respostas[questaoId]) {
+      return;
+    }
+
+    setIsAnswering(true);
+    setError("");
+
+    try {
+      const data = await api.responderSimulado(token, simulado.id, {
+        questao_id: questaoId,
+        alternativa_marcada: alternativa,
+      });
+      setRespostas((current) => ({ ...current, [questaoId]: data.resposta }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nao foi possivel registrar a resposta.");
+    } finally {
+      setIsAnswering(false);
+    }
+  }
+
+  async function finishSimulado() {
+    if (!token || !simulado) {
+      return;
+    }
+
+    setIsFinishing(true);
+    setError("");
+
+    try {
+      const data = await api.finalizarSimulado(token, simulado.id);
+      setSimulado(data.simulado);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nao foi possivel finalizar o simulado.");
+    } finally {
+      setIsFinishing(false);
+    }
+  }
+
+  if (!simulado || !currentQuestion) {
+    return (
+      <section className="flex min-h-screen flex-1 flex-col bg-[#f7f8fc] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+        <header className="flex flex-col gap-4 border-b border-[#e9edf5] pb-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex items-center gap-3">
+            <SidebarToggleButton />
+            <h1 className="text-2xl font-extrabold tracking-tight text-blue-deep sm:text-4xl">
+              Simulados
+            </h1>
+          </div>
+          <UserPill />
+        </header>
+
+        <div className="flex flex-1 items-center justify-center py-16">
+          <article className="w-full max-w-2xl rounded-[24px] border border-border bg-white p-8 text-center shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-soft text-primary">
+              <Bell className="h-7 w-7" />
+            </span>
+            <h2 className="mt-5 text-3xl font-extrabold text-[#1f2435]">
+              Simulado oficial CNH
+            </h2>
+            <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#5f6d84]">
+              O backend vai gerar 30 questoes com IA, salvar o simulado no banco e
+              registrar suas respostas durante a prova.
+            </p>
+
+            {error ? (
+              <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {error}
+              </p>
+            ) : null}
+
+            <button
+              type="button"
+              onClick={() => void startSimulado()}
+              disabled={isLoading}
+              className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)] transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isLoading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : null}
+              {isLoading ? "Gerando simulado..." : "Iniciar simulado"}
+            </button>
+          </article>
+        </div>
+      </section>
+    );
+  }
+
+  const isFinished = simulado.status === "finalizado";
+
   return (
     <section className="flex min-h-screen flex-1 flex-col bg-[#f7f8fc] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
       <header className="flex flex-col gap-4 border-b border-[#e9edf5] pb-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <SidebarToggleButton />
-          <h1 className="text-[52px] font-black leading-none text-[#1560B7]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-blue-deep sm:text-4xl">
             Simulado: Prova Teorica CNH
           </h1>
           <span className="rounded-full bg-[#eef2f7] px-4 py-2 text-xs font-semibold text-[#49586a]">
-            Simulado Oficial do DETRAN
+            {answeredCount}/{questoes.length} respondidas
           </span>
-          <button className="flex items-center gap-2 rounded-full border border-[#ffd3d3] bg-[#fff5f5] px-4 py-2 text-sm font-semibold text-[#dc2626] shadow-sm transition-colors hover:bg-[#ffe7e7]"><ExitIcon className="h-4 w-4" />
-            Abandonar simulado
+          <button
+            type="button"
+            onClick={() => void startSimulado()}
+            className="rounded-full border border-border bg-white px-4 py-2 text-xs font-semibold text-[#9c624e] shadow-sm"
+          >
+            Novo simulado
           </button>
-          
         </div>
 
-        <div className="flex items-center gap-3 self-start xl:self-auto">
-          <button className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-text-muted shadow-sm">
-            <BellIcon />
-          </button>
-          <div className="flex items-center gap-3 rounded-full bg-white px-3 py-2 shadow-[0_10px_24px_rgba(19,32,58,0.08)]">
-            <div className="text-right">
-              <p className="text-sm font-semibold text-[#222222]">Josue Medino</p>
-              <p className="text-xs text-text-muted">Nivel Basico</p>
-            </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-linear-to-br from-slate-800 to-slate-500 text-sm font-black text-white">
-              JM
-            </div>
-          </div>
-        </div>
+        <UserPill />
       </header>
 
       <div className="mt-5">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-[#5f6d84]">Questao 7 de 30</p>
+          <p className="text-sm text-[#5f6d84]">
+            Questao {currentIndex + 1} de {questoes.length}
+          </p>
+          {isFinished ? (
+            <p className="text-sm font-bold text-success">
+              Resultado: {simulado.acertos}/{simulado.total_questoes} acertos
+            </p>
+          ) : null}
         </div>
-        <div className="mt-2 h-4 overflow-hidden rounded-full bg-[#e7e7e7]">
-          <div className="h-full w-[26.666%] rounded-full bg-linear-to-r from-[#2780c7] to-primary" />
+        <div className="mt-2 h-3 overflow-hidden rounded-full bg-white shadow-[inset_0_1px_2px_rgba(19,32,58,0.06)]">
+          <div
+            className="h-full rounded-full bg-linear-to-r from-[#2780c7] to-primary"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       </div>
 
-      <div className="mt-5 grid flex-1 gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <article className="flex h-full flex-col rounded-[28px] border border-border bg-white p-8 shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
+      {error ? (
+        <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="mt-5 grid flex-1 gap-5 2xl:grid-cols-[minmax(0,1fr)_260px]">
+        <article className="flex h-full flex-col rounded-[24px] border border-border bg-white p-4 shadow-[0_12px_24px_rgba(19,32,58,0.08)] sm:p-5">
           <div className="flex flex-col gap-4 border-b border-[#edf1f6] pb-4 md:flex-row md:items-center md:justify-between">
             <span className="w-fit rounded-md bg-[#b9d1eb] px-3 py-2 text-xs font-semibold text-[#294663]">
-              Legislacao de Transito
+              {currentQuestion.area}
             </span>
-            <button className="flex items-center gap-2 self-start rounded-full border border-border bg-white px-4 py-2 text-xs font-semibold text-[#5f6d84] shadow-sm">
-              <SpeakerIcon className="h-5 w-5" />
-              Ouvir questao
-            </button>
+            {currentResponse ? (
+              <span
+                className={`w-fit rounded-full px-3 py-2 text-xs font-bold ${
+                  currentResponse.acertou
+                    ? "bg-success-soft text-success"
+                    : "bg-danger-soft text-danger"
+                }`}
+              >
+                {currentResponse.acertou ? "Resposta correta" : "Resposta incorreta"}
+              </span>
+            ) : null}
           </div>
 
-          <div className="grid flex-1 gap-10 pt-8 xl:grid-cols-[420px_1fr]">
+          <div className="grid flex-1 gap-8 pt-5 xl:grid-cols-[0.9fr_1fr]">
             <div>
-              <p className="mb-4 text-[24px] font-medium leading-snug text-[#222]"> Esta placa de regulamentação indica: </p>
-              <StopSign />
-              <button className="mx-auto mt-6 flex items-center gap-2 rounded-full border border-border bg-white px-3 py-2 text-xs font-medium text-text-muted shadow-sm">
-                <ExpandIcon />
-                Ampliar imagem
-              </button>
+              <p className="text-xl font-semibold leading-8 text-foreground">
+                {currentQuestion.pergunta}
+              </p>
+              {currentQuestion.imagem_url ? (
+                <img
+                  src={currentQuestion.imagem_url}
+                  alt={currentQuestion.placa ?? "Imagem da questao"}
+                  className="mx-auto mt-6 max-h-64 rounded-xl object-contain"
+                />
+              ) : null}
+              {currentResponse?.explicacao ? (
+                <div className="mt-6 rounded-[16px] border border-[#cad6f6] bg-[#eef3ff] px-4 py-3 text-sm leading-6 text-[#34405a]">
+                  <strong className="text-[#3457b9]">Explicacao: </strong>
+                  {currentResponse.explicacao}
+                </div>
+              ) : null}
             </div>
 
             <div className="space-y-3">
-              {choices.map((choice) => (
-                <ChoiceCard key={choice.letter} choice={choice} />
+              {currentQuestion.alternativas.map((choice) => (
+                <ChoiceCard
+                  key={choice.letra}
+                  letter={choice.letra}
+                  text={choice.texto}
+                  response={currentResponse}
+                  disabled={isAnswering || isFinished}
+                  onAnswer={() => void answerQuestion(currentQuestion.id, choice.letra)}
+                />
               ))}
             </div>
           </div>
 
           <div className="mt-6 flex flex-col gap-3 border-t border-[#edf1f6] pt-4 md:flex-row md:items-center md:justify-between">
-            <button className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-[#74829a] shadow-sm">
-              <ArrowLeftIcon className="h-4 w-4" />
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))}
+              disabled={currentIndex === 0}
+              className="rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-[#74829a] shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+            >
               Anterior
             </button>
-            <label className="flex items-center gap-3 text-sm text-[#5f6d84]">
-              <input type="checkbox" className="h-4 w-4 rounded border-border text-primary" />
-              Marcar para revisar depois
-            </label>
-            <button className="flex items-center gap-2 rounded-2xl bg-[#1560B7] px-8 py-4 text-base font-bold text-white">
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((index) => Math.min(questoes.length - 1, index + 1))}
+              disabled={currentIndex === questoes.length - 1}
+              className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)] transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               Proxima questao
-            <ArrowLeftIcon className="h-4 w-4 rotate-180" />
             </button>
           </div>
         </article>
@@ -284,63 +326,51 @@ export default function SimuladosPage() {
         <aside className="flex h-full flex-col gap-4">
           <article className="rounded-[20px] border border-border bg-white p-4 shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-text-muted">
-              Tempo restante
+              Status
             </p>
             <div className="mt-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-primary">
-                <ClockIcon />
-                <span className="text-5xl font-extrabold leading-none">29:32</span>
+                <Clock3 className="h-5 w-5" />
+                <span className="text-2xl font-extrabold leading-none">
+                  {isFinished ? "Finalizado" : "Em andamento"}
+                </span>
               </div>
-              <button className="flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-xs font-semibold text-[#5f6d84] shadow-sm">
-                <PauseIcon />
-                Pausar
-              </button>
             </div>
           </article>
 
           <article className="flex flex-1 flex-col rounded-[20px] border border-border bg-white p-4 shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
-            <h2 className="text-[22px] font-bold text-[#222]">Navegação</h2>
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#52627a]">
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#6bc26b]" />
-                Respondida
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#243f9f]" />
-                Atual
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#efefef]" />
-                Nao respondido
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#ffe49c]" />
-                Marcado
-              </span>
-            </div>
-
-            <div className="mt-4 grid flex-1 content-start grid-cols-5 gap-3">
-              {questionMap.map((item) => (
-                <QuestionStatus key={item.number} item={item} />
+            <h2 className="text-sm font-bold text-foreground">Navegacao</h2>
+            <div className="mt-4 grid flex-1 content-start grid-cols-5 gap-2">
+              {questoes.map((questao, index) => (
+                <QuestionStatus
+                  key={questao.id}
+                  number={index + 1}
+                  status={
+                    index === currentIndex
+                      ? "current"
+                      : respostas[questao.id]
+                        ? "answered"
+                        : "unanswered"
+                  }
+                  onClick={() => setCurrentIndex(index)}
+                />
               ))}
             </div>
           </article>
 
-          <article className="rounded-[20px] border border-[#f0db95] bg-gradient-to-br from-[#fff2af] to-[#ffe38c] p-5 shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
-            <div className="flex gap-3">
-            <BulbIcon className="h-7 w-7 text-[#785b04]" />
-
-            <div>
-              <p className="text-lg font-bold text-[#785b04]">
-                Lembre-se!
-              </p>
-
-              <p className="mt-2 text-sm leading-6 text-[#70570e]">
-                   Voce pode revisar as questoes marcadas antes de finalizar o simulado.
-              </p>
-             </div>
-           </div>
-          </article>
+          <button
+            type="button"
+            onClick={() => void finishSimulado()}
+            disabled={isFinishing || isFinished || answeredCount === 0}
+            className="rounded-[20px] bg-linear-to-br from-[#fff2af] to-[#ffe38c] p-4 text-left shadow-[0_12px_24px_rgba(19,32,58,0.08)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <p className="text-sm font-bold text-[#785b04]">
+              {isFinishing ? "Finalizando..." : "Finalizar simulado"}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[#70570e]">
+              O backend consolida os acertos das respostas registradas.
+            </p>
+          </button>
         </aside>
       </div>
     </section>

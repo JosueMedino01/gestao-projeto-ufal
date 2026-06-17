@@ -1,249 +1,319 @@
-import { BellIcon } from "lucide-react";
+﻿"use client";
+
+import { BookOpen, Bot, CheckCircle2, LoaderCircle, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../_components/auth-provider";
 import { SidebarToggleButton } from "../../_components/sidebar-toggle-button";
+import { UserPill } from "../../_components/user-pill";
+import { api, type Questao, type RespostaQuestao } from "@/lib/api";
 
-type ThemeCard = {
-  title: string;
-  questions: number;
-  progress: number;
-  accent: string;
-  illustration: "legislation" | "sign" | "shield" | "medical" | "environment" | "mechanic";
-};
+const accentColors = ["#d9b021", "#a93445", "#38b935", "#7f1fff", "#213f9f", "#6e6e70"];
 
-const themeCards: ThemeCard[] = [
-  {
-    title: "Legislacao",
-    questions: 120,
-    progress: 70,
-    accent: "#d9b021",
-    illustration: "legislation",
-  },
-  {
-    title: "Sinalizacao de Transito",
-    questions: 120,
-    progress: 70,
-    accent: "#a93445",
-    illustration: "sign",
-  },
-  {
-    title: "Direcao Defensiva",
-    questions: 120,
-    progress: 70,
-    accent: "#38b935",
-    illustration: "shield",
-  },
-  {
-    title: "Primeiros Socorros",
-    questions: 120,
-    progress: 70,
-    accent: "#7f1fff",
-    illustration: "medical",
-  },
-  {
-    title: "Meio Ambiente",
-    questions: 120,
-    progress: 70,
-    accent: "#213f9f",
-    illustration: "environment",
-  },
-  {
-    title: "Nocoes de Mecanica",
-    questions: 120,
-    progress: 70,
-    accent: "#6e6e70",
-    illustration: "mechanic",
-  },
-];
+function PracticeChoice({
+  letter,
+  text,
+  response,
+  onAnswer,
+  disabled,
+}: {
+  letter: string;
+  text: string;
+  response?: RespostaQuestao;
+  onAnswer: () => void;
+  disabled: boolean;
+}) {
+  const isCorrect = response?.resposta_correta === letter;
+  const isSelected = response?.alternativa_marcada === letter;
+  const isWrongSelection = isSelected && response && !response.acertou;
+  const stateClass = isCorrect
+    ? "border-[#b9dfba] bg-[#eff9ef] text-[#21592b]"
+    : isWrongSelection
+      ? "border-[#f0dede] bg-[#f8ebeb] text-[#7a3941]"
+      : isSelected
+        ? "border-[#cfe0f6] bg-[#dfeaf8] text-primary"
+        : "border-border bg-white text-foreground hover:bg-slate-50";
 
-function BotIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="5" y="7" width="14" height="10" rx="3" />
-      <path d="M12 4v3" />
-      <path d="M9 12h.01" />
-      <path d="M15 12h.01" />
-      <path d="M8.5 17v2l2-2" />
-      <path d="M15.5 17v2l-2-2" />
-    </svg>
-  );
-}
-
-function ThemeIllustration({ type }: { type: ThemeCard["illustration"] }) {
-  switch (type) {
-    case "legislation":
-      return (
-        <svg viewBox="0 0 220 120" className="h-full w-full">
-          <rect x="0" y="0" width="220" height="120" rx="18" fill="#4b87c6" />
-          <rect x="111" y="24" width="33" height="42" rx="4" fill="#6aa1d8" />
-          <rect x="116" y="30" width="18" height="3" rx="1.5" fill="#ffd54a" />
-          <rect x="116" y="37" width="22" height="3" rx="1.5" fill="#ffd54a" />
-          <rect x="116" y="44" width="18" height="3" rx="1.5" fill="#ffffff" />
-          <rect x="116" y="51" width="22" height="3" rx="1.5" fill="#ffd54a" />
-          <circle cx="92" cy="54" r="9" fill="#0f223d" />
-          <path d="M87 95h28l-6-28H92Z" fill="#ffcc34" />
-          <path d="M97 60h15l7 12H99Z" fill="#0f223d" />
-          <path d="M85 68h10l5 7H88Z" fill="#0f223d" />
-          <path d="M106 72h20v6h-20Z" fill="#0f223d" />
-        </svg>
-      );
-    case "sign":
-      return (
-        <svg viewBox="0 0 220 120" className="h-full w-full">
-          <rect x="0" y="0" width="220" height="120" rx="18" fill="#4b87c6" />
-          <rect x="106" y="28" width="8" height="55" rx="4" fill="#8e2738" />
-          <circle cx="110" cy="24" r="20" fill="#c34d5d" opacity="0.35" />
-          <circle cx="110" cy="24" r="14" fill="#a93445" />
-          <path d="M63 97c9-11 15-18 18-22l10 22Z" fill="#914c62" />
-          <path d="M77 97c7-8 10-14 12-18l8 18Z" fill="#693d53" />
-          <path d="M144 97h22l-8-30Z" fill="#35284f" />
-          <circle cx="157" cy="54" r="4" fill="#ffcab6" />
-          <rect x="154" y="58" width="7" height="18" rx="3.5" fill="#f0f4ff" />
-          <path d="M157 66 146 77" stroke="#f0f4ff" strokeWidth="4" strokeLinecap="round" />
-          <path d="M160 66 170 74" stroke="#ff5f6d" strokeWidth="4" strokeLinecap="round" />
-        </svg>
-      );
-    case "shield":
-      return (
-        <svg viewBox="0 0 220 120" className="h-full w-full">
-          <rect x="0" y="0" width="220" height="120" rx="18" fill="#4b87c6" />
-          <path d="M111 20c12 4 23 8 32 11v22c0 27-21 42-32 47-11-5-32-20-32-47V31c9-3 20-7 32-11Z" fill="#41b637" stroke="#2a7f22" strokeWidth="3" />
-          <path d="m97 54 10 10 19-24" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="103" y="93" width="16" height="8" rx="4" fill="#8ed8ff" />
-        </svg>
-      );
-    case "medical":
-      return (
-        <svg viewBox="0 0 220 120" className="h-full w-full">
-          <rect x="0" y="0" width="220" height="120" rx="18" fill="#4b87c6" />
-          <circle cx="86" cy="42" r="8" fill="#ffcfbe" />
-          <circle cx="126" cy="44" r="8" fill="#ffcfbe" />
-          <rect x="77" y="50" width="18" height="36" rx="7" fill="#ffffff" />
-          <rect x="117" y="52" width="18" height="34" rx="7" fill="#ffffff" />
-          <rect x="81" y="33" width="10" height="6" rx="3" fill="#1f3658" />
-          <path d="M73 92h27" stroke="#1f3658" strokeWidth="4" strokeLinecap="round" />
-          <path d="M113 92h27" stroke="#1f3658" strokeWidth="4" strokeLinecap="round" />
-          <path d="M87 57v16" stroke="#d9b021" strokeWidth="4" strokeLinecap="round" />
-          <path d="M79 65h16" stroke="#d9b021" strokeWidth="4" strokeLinecap="round" />
-        </svg>
-      );
-    case "environment":
-      return (
-        <svg viewBox="0 0 220 120" className="h-full w-full">
-          <rect x="0" y="0" width="220" height="120" rx="18" fill="#4b87c6" />
-          <path d="M72 86c0-16 13-29 29-29 6 0 11 2 16 5 5-9 14-15 25-15 16 0 29 13 29 29 0 2 0 4-.5 6H72Z" fill="#1f3e9b" />
-          <path d="M76 86c3-14 18-24 35-24 16 0 31 10 34 24Z" fill="#2e5dcc" />
-          <path d="M108 84c-10-12-15-26-15-40 11 3 20 13 23 25" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
-          <path d="M119 83c6-19 18-33 35-42-2 17-12 32-28 41" stroke="#ff7fa6" strokeWidth="4" strokeLinecap="round" />
-          <path d="M96 51c-10 2-18 10-21 20 12-1 21-8 25-17" stroke="#ffd54a" strokeWidth="4" strokeLinecap="round" />
-        </svg>
-      );
-    case "mechanic":
-      return (
-        <svg viewBox="0 0 220 120" className="h-full w-full">
-          <rect x="0" y="0" width="220" height="120" rx="18" fill="#4b87c6" />
-          <rect x="88" y="24" width="52" height="30" rx="8" fill="#e8edf7" />
-          <rect x="82" y="44" width="64" height="18" rx="8" fill="#ffffff" />
-          <circle cx="96" cy="64" r="8" fill="#3f4b5f" />
-          <circle cx="132" cy="64" r="8" fill="#3f4b5f" />
-          <path d="M73 97V34" stroke="#e6f0ff" strokeWidth="3" />
-          <path d="M150 97V34" stroke="#e6f0ff" strokeWidth="3" />
-          <circle cx="152" cy="73" r="6" fill="#ffcfbe" />
-          <rect x="148" y="79" width="9" height="18" rx="4.5" fill="#f1cb3c" />
-          <path d="M151 83 138 72" stroke="#0f223d" strokeWidth="4" strokeLinecap="round" />
-        </svg>
-      );
-  }
-}
-
-function ThemeCardItem({ card }: { card: ThemeCard }) {
-  return (
-    <article className="overflow-hidden rounded-[20px] border border-[#252525] bg-white shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
-      <div className="h-44 bg-[#4b87c6]">
-        <ThemeIllustration type={card.illustration} />
-      </div>
-      <div className="space-y-4 px-5 py-4">
-        <div className="text-center">
-          <h2 className="text-[1.35rem] font-extrabold text-[#1d1d1d]">{card.title}</h2>
-        </div>
-
-        <div className="space-y-1">
-          <div className="h-1.5 rounded-full bg-[#e6e8ec]">
-            <div
-              className="h-full rounded-full"
-              style={{ width: `${card.progress}%`, backgroundColor: card.accent }}
-            />
-          </div>
-          <div className="flex items-center justify-between text-[10px] text-[#6d7481]">
-            <span>{card.questions} Questoes</span>
-            <span>{card.progress}%</span>
-          </div>
-          <div className="text-right text-[10px] text-[#6d7481]">Bom desempenho</div>
-        </div>
-
-        <button
-          className="w-full rounded-full px-4 py-2 text-sm font-bold text-white shadow-[0_10px_18px_rgba(19,32,58,0.14)]"
-          style={{ backgroundColor: card.accent }}
-        >
-          Praticar agora
-        </button>
-      </div>
-    </article>
+    <button
+      type="button"
+      onClick={onAnswer}
+      disabled={disabled || Boolean(response)}
+      className={`flex w-full items-center gap-4 rounded-[20px] border px-4 py-4 text-left transition-colors disabled:cursor-default ${stateClass}`}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-current bg-white text-sm font-extrabold">
+        {letter}
+      </span>
+      <span className="text-base font-semibold">{text}</span>
+      {isCorrect ? <CheckCircle2 className="ml-auto h-5 w-5 text-[#3f8f46]" /> : null}
+      {isWrongSelection ? <XCircle className="ml-auto h-5 w-5 text-[#b44f5b]" /> : null}
+    </button>
   );
 }
 
 export default function PraticaPorTemaPage() {
+  const { token } = useAuth();
+  const [areas, setAreas] = useState<string[]>([]);
+  const [tema, setTema] = useState("");
+  const [questoes, setQuestoes] = useState<Questao[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [respostas, setRespostas] = useState<Record<number, RespostaQuestao>>({});
+  const [isLoadingAreas, setIsLoadingAreas] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isAnswering, setIsAnswering] = useState(false);
+  const [error, setError] = useState("");
+
+  const currentQuestion = questoes[currentIndex];
+  const currentResponse = currentQuestion ? respostas[currentQuestion.id] : undefined;
+
+  useEffect(() => {
+    let mounted = true;
+
+    api
+      .areas()
+      .then((data) => {
+        if (mounted) {
+          setAreas(data.areas);
+        }
+      })
+      .catch((err) => {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : "Nao foi possivel carregar os temas.");
+        }
+      })
+      .finally(() => {
+        if (mounted) {
+          setIsLoadingAreas(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  async function startPractice(area: string) {
+    if (!token) {
+      return;
+    }
+
+    setIsGenerating(true);
+    setError("");
+    setTema(area);
+    setQuestoes([]);
+    setRespostas({});
+    setCurrentIndex(0);
+
+    try {
+      const data = await api.criarPratica(token, { tema: area, quantidade: 5 });
+      setTema(data.tema);
+      setQuestoes(data.questoes);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nao foi possivel gerar a pratica.");
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
+  async function answerQuestion(questaoId: number, alternativa: string) {
+    if (!token || respostas[questaoId]) {
+      return;
+    }
+
+    setIsAnswering(true);
+    setError("");
+
+    try {
+      const data = await api.responderQuestao(token, questaoId, alternativa);
+      setRespostas((current) => ({ ...current, [questaoId]: data.resposta }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nao foi possivel registrar a resposta.");
+    } finally {
+      setIsAnswering(false);
+    }
+  }
+
+  if (!currentQuestion) {
+    return (
+      <section className="flex min-h-screen flex-1 flex-col bg-[#f7f8fc] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+        <header className="flex flex-col gap-4 pb-6 xl:flex-row xl:items-start xl:justify-between">
+          <div className="flex items-start gap-3">
+            <SidebarToggleButton />
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-blue-deep sm:text-[48px]">
+                Praticar por Tema
+              </h1>
+              <p className="mt-1 text-sm text-[#5f6d84]">
+                Escolha um tema para gerar questoes pela API.
+              </p>
+            </div>
+          </div>
+
+          <UserPill />
+        </header>
+
+        {error ? (
+          <p className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {error}
+          </p>
+        ) : null}
+
+        {isLoadingAreas ? (
+          <div className="flex flex-1 items-center justify-center">
+            <LoaderCircle className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : (
+          <div className="grid gap-9 md:grid-cols-2 2xl:grid-cols-3">
+            {areas.map((area, index) => {
+              const accent = accentColors[index % accentColors.length];
+
+              return (
+                <article
+                  key={area}
+                  className="overflow-hidden rounded-[20px] border border-[#252525] bg-white shadow-[0_12px_24px_rgba(19,32,58,0.08)]"
+                >
+                  <div className="flex h-44 items-center justify-center bg-[#4b87c6] text-white">
+                    <BookOpen className="h-20 w-20" />
+                  </div>
+                  <div className="space-y-4 px-5 py-4">
+                    <div className="text-center">
+                      <h2 className="text-[1.35rem] font-extrabold text-[#1d1d1d]">
+                        {area}
+                      </h2>
+                    </div>
+                    <p className="text-center text-sm leading-6 text-[#6d7481]">
+                      Gere 5 questoes focadas neste tema e receba a correcao
+                      imediatamente.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => void startPractice(area)}
+                      disabled={isGenerating}
+                      className="flex w-full items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-white shadow-[0_10px_18px_rgba(19,32,58,0.14)] disabled:cursor-not-allowed disabled:opacity-60"
+                      style={{ backgroundColor: accent }}
+                    >
+                      {isGenerating && tema === area ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : null}
+                      {isGenerating && tema === area ? "Gerando..." : "Praticar agora"}
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+
+        <article className="mt-8 flex flex-col gap-4 rounded-[20px] border-2 border-[#4f8ed5] bg-white px-4 py-4 shadow-[0_12px_24px_rgba(19,32,58,0.08)] md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#cfe0f6] bg-[#eff5fd] text-primary">
+              <Bot className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-xl font-extrabold text-blue-deep">Dica do Tutor Inteligente</p>
+              <p className="mt-1 text-sm text-[#647389]">
+                Use esta tela para praticar um tema especifico e enviar suas duvidas
+                para o tutor depois.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+    );
+  }
+
   return (
     <section className="flex min-h-screen flex-1 flex-col bg-[#f7f8fc] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
       <header className="flex flex-col gap-4 pb-6 xl:flex-row xl:items-start xl:justify-between">
         <div className="flex items-start gap-3">
           <SidebarToggleButton />
           <div>
-<h1 className="text-3xl font-extrabold tracking-tight text-blue-deep sm:text-[48px]">
-              Praticar por Tema
+            <h1 className="text-3xl font-extrabold tracking-tight text-blue-deep sm:text-[48px]">
+              {tema}
             </h1>
             <p className="mt-1 text-sm text-[#5f6d84]">
-              Escolha um tema para aprofundar!
+              Questao {currentIndex + 1} de {questoes.length}
             </p>
           </div>
         </div>
-
-        <div className="flex items-center gap-3 self-start xl:self-auto">
-          <button className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white text-text-muted shadow-sm">
-            <BellIcon />
-          </button>
-          <div className="flex items-center gap-3 rounded-full bg-white px-3 py-2 shadow-[0_10px_24px_rgba(19,32,58,0.08)]">
-            <div className="text-right">
-              <p className="text-sm font-semibold text-[#222222]">Josue Medino</p>
-              <p className="text-xs text-text-muted">Nivel Basico</p>
-            </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-linear-to-br from-slate-800 to-slate-500 text-sm font-black text-white">
-              JM
-            </div>
-          </div>
-        </div>
+        <UserPill />
       </header>
 
-      <div className="grid gap-9 md:grid-cols-2 2xl:grid-cols-3">
-        {themeCards.map((card) => (
-          <ThemeCardItem key={card.title} card={card} />
-        ))}
-      </div>
+      {error ? (
+        <p className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </p>
+      ) : null}
 
-      <article className="mt-8 flex flex-col gap-4 rounded-[20px] border-2 border-[#4f8ed5] bg-white px-4 py-4 shadow-[0_12px_24px_rgba(19,32,58,0.08)] md:flex-row md:items-center md:justify-between">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#cfe0f6] bg-[#eff5fd] text-primary">
-            <BotIcon className="h-6 w-6" />
-          </div>
+      <article className="rounded-[24px] border border-border bg-white p-5 shadow-[0_12px_24px_rgba(19,32,58,0.08)]">
+        <div className="flex flex-col gap-6 xl:grid xl:grid-cols-[0.9fr_1fr]">
           <div>
-            <p className="text-xl font-extrabold text-blue-deep">Dica do Tutor Inteligente</p>
-            <p className="mt-1 text-sm text-[#647389]">
-              Comece pelos temas que voce tem mais dificuldade. A pratica constante e o caminho para aprovacao!
+            <span className="rounded-md bg-[#b9d1eb] px-3 py-2 text-xs font-semibold text-[#294663]">
+              {currentQuestion.area}
+            </span>
+            <p className="mt-5 text-xl font-semibold leading-8 text-foreground">
+              {currentQuestion.pergunta}
             </p>
+            {currentQuestion.imagem_url ? (
+              <img
+                src={currentQuestion.imagem_url}
+                alt={currentQuestion.placa ?? "Imagem da questao"}
+                className="mx-auto mt-6 max-h-64 rounded-xl object-contain"
+              />
+            ) : null}
+            {currentResponse?.explicacao ? (
+              <div className="mt-6 rounded-[16px] border border-[#cad6f6] bg-[#eef3ff] px-4 py-3 text-sm leading-6 text-[#34405a]">
+                <strong className="text-[#3457b9]">Explicacao: </strong>
+                {currentResponse.explicacao}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="space-y-3">
+            {currentQuestion.alternativas.map((choice) => (
+              <PracticeChoice
+                key={choice.letra}
+                letter={choice.letra}
+                text={choice.texto}
+                response={currentResponse}
+                disabled={isAnswering}
+                onAnswer={() => void answerQuestion(currentQuestion.id, choice.letra)}
+              />
+            ))}
           </div>
         </div>
 
-        <button className="rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-[0_12px_20px_rgba(42,103,215,0.25)]">
-          Iniciar Conversa
-        </button>
+        <div className="mt-6 flex flex-col gap-3 border-t border-[#edf1f6] pt-4 md:flex-row md:items-center md:justify-between">
+          <button
+            type="button"
+            onClick={() => {
+              setQuestoes([]);
+              setTema("");
+              setRespostas({});
+              setCurrentIndex(0);
+            }}
+            className="rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-[#74829a] shadow-sm"
+          >
+            Voltar aos temas
+          </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))}
+              disabled={currentIndex === 0}
+              className="rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-[#74829a] shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Anterior
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((index) => Math.min(questoes.length - 1, index + 1))}
+              disabled={currentIndex === questoes.length - 1}
+              className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_18px_rgba(42,103,215,0.28)] transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Proxima
+            </button>
+          </div>
+        </div>
       </article>
     </section>
   );

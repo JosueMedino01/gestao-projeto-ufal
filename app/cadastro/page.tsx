@@ -1,78 +1,93 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "../_components/auth-provider";
 
 export default function CadastroPage() {
-  
+  const { cadastro } = useAuth();
+  const [nomeCompleto, setNomeCompleto] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
-  return (
-    <main className="min-h-screen flex bg-white">
-      {/* Lado esquerdo */}
-      <section className="hidden lg:flex w-[40%] bg-[#152E88] text-white flex-col justify-center px-24">
-        <Image
-        src="/tutor-cnh-logo.png"
-        alt="Tutor CNH"
-        width={311}
-        height={236}
-        className="mb-10 w-[180px] h-auto"/>
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-        <h1 className="text-5xl italic font-light leading-tight">
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (senha !== confirmarSenha) {
+      setError("As senhas precisam ser iguais.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await cadastro({
+        nomeCompleto,
+        dataNascimento,
+        email,
+        senha,
+        confirmarSenha,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nao foi possivel criar a conta.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <main className="flex min-h-screen bg-white">
+      <section className="hidden w-[40%] flex-col justify-center bg-[#152E88] px-24 text-white lg:flex">
+        <Image
+          src="/tutor-cnh-logo.png"
+          alt="Tutor CNH"
+          width={311}
+          height={236}
+          className="mb-10 h-auto w-[180px]"
+        />
+
+        <h1 className="text-5xl font-light italic leading-tight">
           Crie sua conta e comece hoje mesmo a{" "}
-          <span className="font-semibold text-[#0C5DA8]">
-            estudar com o Tutor CNH!
-          </span>
+          <span className="font-semibold text-[#73B8F4]">estudar com o Tutor CNH!</span>
         </h1>
 
         <p className="mt-8 text-xl font-light">
-          Simulados atualizados, prática por temas e tutor inteligente
-          com IA para te preparar para a prova teórica da CNH.
+          Simulados atualizados, pratica por temas e tutor inteligente com IA para te
+          preparar para a prova teorica da CNH.
         </p>
 
-        <div className="space-y-8 mt-14">
+        <div className="mt-14 space-y-8">
           <div>
-            <h3 className="text-xl font-medium">
-              Simulados Realistas
-            </h3>
-            <p>
-              Questões atualizadas no padrão DETRAN.
-            </p>
+            <h3 className="text-xl font-medium">Simulados Realistas</h3>
+            <p>Questoes atualizadas no padrao DETRAN.</p>
           </div>
-
           <div>
-            <h3 className="text-xl font-medium">
-              Estude por Temas
-            </h3>
-            <p>
-              Foque nos assuntos que mais caem na prova.
-            </p>
+            <h3 className="text-xl font-medium">Estude por Temas</h3>
+            <p>Foque nos assuntos que mais caem na prova.</p>
           </div>
-
           <div>
-            <h3 className="text-xl font-medium">
-              Tutor Inteligente com IA
-            </h3>
-            <p>
-              Tire dúvidas e receba explicações personalizadas.
-            </p>
+            <h3 className="text-xl font-medium">Tutor Inteligente com IA</h3>
+            <p>Tire duvidas e receba explicacoes personalizadas.</p>
           </div>
         </div>
       </section>
 
-      {/* Formulário */}
-      <section className="flex-1 flex justify-center items-center p-10">
-        <div className="w-full max-w-5xl bg-[#F5F5F5] rounded-xl shadow-md p-12">
-          <h2 className="text-center text-5xl font-medium text-[#222222]">
+      <section className="flex flex-1 items-center justify-center p-8 sm:p-10">
+        <div className="w-full max-w-5xl rounded-xl bg-[#F5F5F5] p-8 shadow-md sm:p-12">
+          <h2 className="text-center text-4xl font-medium text-[#222222] sm:text-5xl">
             Crie sua conta
           </h2>
-
           <p className="mt-4 text-center text-[#6A7487]">
-            Preencha os dados abaixo para começar
+            Preencha os dados abaixo para comecar
           </p>
 
-          <form className="mt-10 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Nome */}
+          <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
                 <label
                   htmlFor="nomeCompleto"
@@ -80,18 +95,19 @@ export default function CadastroPage() {
                 >
                   Nome completo
                 </label>
-
                 <input
                   id="nomeCompleto"
                   name="nomeCompleto"
                   type="text"
+                  value={nomeCompleto}
+                  onChange={(event) => setNomeCompleto(event.target.value)}
                   placeholder="Digite seu nome completo"
-                  aria-label="Nome completo"
+                  autoComplete="name"
+                  required
                   className="h-16 w-full rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] placeholder:text-[#9AA3B2] focus:border-[#2A67D7] focus:outline-none"
                 />
               </div>
 
-              {/* Data */}
               <div>
                 <label
                   htmlFor="dataNascimento"
@@ -99,57 +115,52 @@ export default function CadastroPage() {
                 >
                   Data de nascimento
                 </label>
-
-                
                 <input
+                  id="dataNascimento"
                   type="date"
                   value={dataNascimento}
-                  onChange={(e) => setDataNascimento(e.target.value)}
-                  className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"/>
+                  onChange={(event) => setDataNascimento(event.target.value)}
+                  required
+                  className="h-16 w-full rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
+                />
               </div>
             </div>
 
-            {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-lg font-medium text-[#222222]"
-              >
+              <label htmlFor="email" className="mb-2 block text-lg font-medium text-[#222222]">
                 E-mail
               </label>
-
               <input
                 id="email"
                 name="email"
                 type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="Digite seu e-mail"
-                aria-label="E-mail"
                 autoComplete="email"
-                className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
+                required
+                className="h-16 w-full rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
               />
             </div>
 
-            {/* Senha */}
             <div>
-              <label
-                htmlFor="senha"
-                className="mb-2 block text-lg font-medium text-[#222222]"
-              >
+              <label htmlFor="senha" className="mb-2 block text-lg font-medium text-[#222222]">
                 Senha
               </label>
-
               <input
                 id="senha"
                 name="senha"
                 type="password"
+                value={senha}
+                onChange={(event) => setSenha(event.target.value)}
                 placeholder="Crie sua senha"
-                aria-label="Senha"
                 autoComplete="new-password"
-                className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
+                minLength={6}
+                required
+                className="h-16 w-full rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
               />
             </div>
 
-            {/* Confirmar senha */}
             <div>
               <label
                 htmlFor="confirmarSenha"
@@ -157,32 +168,38 @@ export default function CadastroPage() {
               >
                 Confirmar senha
               </label>
-
               <input
                 id="confirmarSenha"
                 name="confirmarSenha"
                 type="password"
+                value={confirmarSenha}
+                onChange={(event) => setConfirmarSenha(event.target.value)}
                 placeholder="Confirme sua senha"
-                aria-label="Confirmar senha"
                 autoComplete="new-password"
-                className="w-full h-16 rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
+                minLength={6}
+                required
+                className="h-16 w-full rounded-2xl border border-[#DCE2EE] bg-white px-5 text-[#222222] focus:border-[#2A67D7] focus:outline-none"
               />
             </div>
 
+            {error ? (
+              <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {error}
+              </p>
+            ) : null}
+
             <button
               type="submit"
-              className="w-full h-16 bg-[#152E88] text-white rounded-2xl text-xl font-medium hover:bg-[#10246b] transition-colors"
+              disabled={isSubmitting}
+              className="h-16 w-full rounded-2xl bg-[#152E88] text-xl font-medium text-white transition-colors hover:bg-[#10246b] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Criar minha conta
+              {isSubmitting ? "Criando conta..." : "Criar minha conta"}
             </button>
           </form>
 
           <p className="mt-8 text-center text-[#6A7487]">
-            Já tem uma conta?{" "}
-            <Link
-              href="/login"
-              className="font-semibold text-[#152E88] hover:underline"
-            >
+            Ja tem uma conta?{" "}
+            <Link href="/login" className="font-semibold text-[#152E88] hover:underline">
               Fazer login
             </Link>
           </p>

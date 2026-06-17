@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { useAuth } from "./auth-provider";
 import { useSidebarLayout } from "./sidebar-layout";
 
 type IconProps = {
@@ -127,7 +128,7 @@ function CogIcon({ className }: IconProps) {
 }
 
 const menuItems = [
-  { label: "Inicio", href: "/dashboard", icon: HomeIcon },
+  { label: "Inicio", href: "/dashboard/inicio", icon: HomeIcon },
   { label: "Simulados", href: "/dashboard/simulados", icon: ClipboardIcon },
   { label: "Pratica por Tema", href: "/dashboard/pratica-por-tema", icon: BookIcon },
   { label: "Revisar Erros", href: "/dashboard/revisar-erros", icon: AlertIcon },
@@ -163,6 +164,7 @@ function SidebarLogo() {
 export function Sidebar() {
   const pathname = usePathname();
   const { isExpanded } = useSidebarLayout();
+  const { logout } = useAuth();
 
   return (
     <aside
@@ -209,15 +211,16 @@ export function Sidebar() {
           isExpanded ? "justify-between lg:px-2" : "justify-center"
         }`}
       >
-        <Link
-          href="/"
+        <button
+          type="button"
+          onClick={logout}
           className={`flex rounded-lg px-2 py-1.5 hover:bg-white/8 ${
             isExpanded ? "items-center gap-2" : "justify-center"
           }`}
         >
           <span className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold">LO</span>
           {isExpanded ? <span>Log out</span> : null}
-        </Link>
+        </button>
         {isExpanded ? (
           <span className="hidden rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold lg:inline">
             UI
